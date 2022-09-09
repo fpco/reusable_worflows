@@ -1,6 +1,10 @@
 on:
   workflow_call:
     inputs:
+      folder:
+        default: './'
+        required: false
+        type: string
       toolchain:
         default: 'stable'
         required: false
@@ -20,6 +24,7 @@ on:
 
 jobs:
   build-cache:
+    if: inputs.binary != ''
     runs-on: ubuntu-latest
     steps:
       - uses: de-vri-es/setup-git-credentials@v2
@@ -46,13 +51,13 @@ jobs:
           path: target/x86_64-unknown-linux-musl/release/${{ inputs.binary }}
           key: ${{ github.sha }}-${{ inputs.binary }}
       - name: Build Rust
-        run: cargo build --release --package ${{ inputs.package }} --target x86_64-unknown-linux-musl
+        run: cd ${{ inputs.folder }} && cargo build --release --package ${{ inputs.package }} --target x86_64-unknown-linux-musl
       - name: Strip Rust
-        run: strip target/x86_64-unknown-linux-musl/release/${{ inputs.binary }}
+        run: cd ${{ inputs.folder }} && strip target/x86_64-unknown-linux-musl/release/${{ inputs.binary }}
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.binary }}
-          path: target/x86_64-unknown-linux-musl/release/${{ inputs.binary }}
+          path: ${{ inputs.folder }}/ target/x86_64-unknown-linux-musl/release/${{ inputs.binary }}
 
   lint:
     runs-on: ubuntu-latest
@@ -69,8 +74,8 @@ jobs:
           components: rustfmt, clippy
       - uses: actions/checkout@v3
       - uses: Swatinem/rust-cache@v1
-      - run: cargo clippy -- --deny "warnings"
-      - run: cargo fmt -- --check
+      - run: cd ${{ inputs.folder }} && cargo clippy -- --deny "warnings"
+      - run: cd ${{ inputs.folder }} && cargo fmt -- --check
 
   test:
     runs-on: ubuntu-latest
@@ -86,5 +91,5 @@ jobs:
           override: true
       - uses: actions/checkout@v3
       - uses: Swatinem/rust-cache@v1
-      - run: cargo test
+      - run: cd ${{ inputs.folder }} && cargo test
  
