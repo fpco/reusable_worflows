@@ -16,7 +16,8 @@ on:
         required: true
         type: string
       build_version_location:
-        required: true
+        default: '/tmp/build_version'
+        required: false
         type: string
     secrets:
       git_credential:
