@@ -38,7 +38,7 @@ jobs:
     steps:
       - name: Run dependency script
         if: ${{ inputs.run_dep_script }}
-        run: ${{ input.dep_script }}
+        run: ${{ inputs.dep_script }}
       - uses: de-vri-es/setup-git-credentials@v2
         with:
           credentials: ${{ secrets.git_credential }}
@@ -76,7 +76,7 @@ jobs:
     steps:
       - name: Run dependency script
         if: ${{ inputs.run_dep_script }}
-        run: ${{ input.dep_script }}
+        run: ${{ inputs.dep_script }}
       - uses: de-vri-es/setup-git-credentials@v2
         with:
           credentials: ${{ secrets.git_credential }}
@@ -97,7 +97,7 @@ jobs:
     steps:
       - name: Run dependency script
         if: ${{ inputs.run_dep_script }}
-        run: ${{ input.dep_script }}
+        run: ${{ inputs.dep_script }}
       - uses: de-vri-es/setup-git-credentials@v2
         with:
           credentials: ${{ secrets.git_credential }}
