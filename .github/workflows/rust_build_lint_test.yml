@@ -15,6 +15,10 @@ on:
       package:
         required: true
         type: string
+      dependency_script:
+        default: '/bin/true'
+        required: false
+        type: string
       build_version_location:
         default: '/tmp/build_version'
         required: false
@@ -28,6 +32,8 @@ jobs:
     if: inputs.binary != ''
     runs-on: ubuntu-latest
     steps:
+      - name: Run dependency script
+        run: ${{ input.dependency_script }}
       - uses: de-vri-es/setup-git-credentials@v2
         with:
           credentials: ${{ secrets.git_credential }}
@@ -63,6 +69,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
+      - name: Run dependency script
+        run: ${{ input.dependency_script }}
       - uses: de-vri-es/setup-git-credentials@v2
         with:
           credentials: ${{ secrets.git_credential }}
@@ -81,6 +89,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Run dependency script
+        run: ${{ input.dependency_script }}
       - uses: de-vri-es/setup-git-credentials@v2
         with:
           credentials: ${{ secrets.git_credential }}
