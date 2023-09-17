@@ -27,6 +27,10 @@ on:
         default: '/tmp/build_version'
         required: false
         type: string
+      extra_rust_flags:
+        default: ''
+        required: false
+        type: string
     secrets:
       git_credential:
         required: false
@@ -63,7 +67,7 @@ jobs:
           path: target/x86_64-unknown-linux-musl/release/${{ inputs.binary }}
           key: ${{ github.sha }}-${{ inputs.binary }}
       - name: Build Rust
-        run: cd ${{ inputs.folder }} && cargo build --release --package ${{ inputs.package }} --target x86_64-unknown-linux-musl
+        run: cd ${{ inputs.folder }} && if [ -n "${{ inputs.extra_rust_flags }}" ]; then export RUSTFLAGS="${{ inputs.extra_rust_flags }}"; fi && cargo build --release --package ${{ inputs.package }} --target x86_64-unknown-linux-musl
       - name: Strip Rust
         run: cd ${{ inputs.folder }} && strip target/x86_64-unknown-linux-musl/release/${{ inputs.binary }}
       - uses: actions/upload-artifact@v2
@@ -89,8 +93,8 @@ jobs:
           components: rustfmt, clippy
       - uses: actions/checkout@v3
       - uses: Swatinem/rust-cache@v1
-      - run: cd ${{ inputs.folder }} && cargo clippy -- --deny "warnings"
-      - run: cd ${{ inputs.folder }} && cargo fmt -- --check
+      - run: cd ${{ inputs.folder }} && if [ -n "${{ inputs.extra_rust_flags }}" ]; then export RUSTFLAGS="${{ inputs.extra_rust_flags }}"; fi && cargo clippy -- --deny "warnings"
+      - run: cd ${{ inputs.folder }} && if [ -n "${{ inputs.extra_rust_flags }}" ]; then export RUSTFLAGS="${{ inputs.extra_rust_flags }}"; fi && cargo fmt -- --check
 
   test:
     runs-on: ubuntu-latest
@@ -109,5 +113,4 @@ jobs:
           override: true
       - uses: actions/checkout@v3
       - uses: Swatinem/rust-cache@v1
-      - run: cd ${{ inputs.folder }} && cargo test
- 
+      - run: cd ${{ inputs.folder }} && if [ -n "${{ inputs.extra_rust_flags }}" ]; then export RUSTFLAGS="${{ inputs.extra_rust_flags }}"; fi && cargo test
